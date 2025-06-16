@@ -1,0 +1,17 @@
+#ClusterIP Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: httpd-service
+  namespace: my-app
+spec:
+  type: ClusterIP
+  selector:
+    app: httpd
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+
+#ClusterIP Service
+#run kubectl expose deployment httpd-deployment --name= httpd-nodeport -n my-app --type= NodePort --port= 80 --target-port= 80

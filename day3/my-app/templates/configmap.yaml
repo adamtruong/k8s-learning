@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-config
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: {{ .Release.Name }}
+    chart: {{ .Chart.Name }}-{{ .Chart.Version }}
+data:
+  APP_ENV: {{ .Values.appConfig.environment | quote }}
+  APP_NAME: {{ .Values.appConfig.name | quote }}
+  DATABASE_HOST: {{ .Values.appConfig.databaseHost | quote }}
+  CACHE_DRIVER: {{ .Values.appConfig.cacheDriver | quote }} 
