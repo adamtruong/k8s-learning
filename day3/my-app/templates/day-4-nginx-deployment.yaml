@@ -1,0 +1,70 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+  namespace: my-app
+  labels:
+    app: nginx-pvc
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx-pvc
+  template:
+    metadata:
+      labels:
+        app: nginx-pvc
+    spec:
+      # Private node
+      nodeSelector:
+        node-role: private
+      tolerations:
+      - key: node-role
+        value: private
+        effect: NoSchedule
+      containers:
+      - name: nginx
+        image: nginx:latest
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - name: nginx-storage
+          mountPath: /usr/share/nginx/html
+        resources:
+          limits:
+            memory: 256Mi
+            cpu: "0.5"
+          requests:
+            memory: 128Mi
+            cpu: "0.1"
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 15
+          periodSeconds: 20
+      volumes:
+      - name: nginx-storage
+        persistentVolumeClaim:
+          claimName: nginx-pvc
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-service
+  namespace: my-app
+spec:
+  type: ClusterIP
+  selector:
+    app: nginx-pvc
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
