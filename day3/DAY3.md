@@ -23,21 +23,20 @@ kubectl apply -f configmap.yaml
 kubectl apply -f secret.yaml
 
 
-### 4. Package and Push Chart
-# Package chart
-helm package my-app
+#package
+helm package my-app-chart
+docker login
+helm push <filename.tgz> oci://registry-1.docker.io/ptime123
 
-# Push to registry (example)
-helm push my-app-0.1.0.tgz oci://registry-1.docker.io/your-username
+#list available versions
+helm show chart oci://registry-1.docker.io/ptime123/my-app --version 0.2.0
 
-## Verification Steps
-### 1. Check Helm Releases
-# List releases
-helm list -n my-app
+#pull the chart
+helm pull oci://registry-1.docker.io/ptime123/my-app --version 0.2.0
 
-# Get release status
-helm status my-wp -n my-app
-
+#update or install chart
+helm install my-release oci://registry-1.docker.io/ptime123/my-app --version 0.2.0
+helm upgrade my-release oci://registry-1.docker.io/ptime123/my-app --version 0.2.0
 
 ### 2. Verify Configuration
 # List ConfigMaps and Secrets
@@ -56,17 +55,3 @@ kubectl port-forward svc/my-wp 8080:80 -n my-app
 # Access application
 curl localhost:8080
 
-#package
-helm package my-app-chart
-docker login
-helm push <filename.tgz> oci://registry-1.docker.io/ptime123
-
-#list available versions
-helm show chart oci://registry-1.docker.io/ptime123/my-app --version 0.2.0
-
-#pull the chart
-helm pull oci://registry-1.docker.io/ptime123/my-app --version 0.2.0
-
-#update or install chart
-helm install my-release oci://registry-1.docker.io/ptime123/my-app --version 0.2.0
-helm upgrade my-release oci://registry-1.docker.io/ptime123/my-app --version 0.2.0

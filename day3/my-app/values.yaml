@@ -122,6 +122,35 @@ tolerations: []
 
 affinity: {}
 
+# Ingress Controller Configuration
+ingressController:
+  controller:
+    service:
+      type: NodePort
+      nodePorts:
+        http: 8080
+        https: 8443
+    hostNetwork: true
+    nodeSelector:
+      node-role: gateway
+    tolerations:
+    - key: node-role
+      value: gateway
+      effect: NoSchedule
+    config:
+      use-forwarded-headers: "true"
+      compute-full-forwarded-for: "true"
+      use-proxy-protocol: "true"
+    resources:
+      limits:
+        cpu: 500m
+        memory: 512Mi
+      requests:
+        cpu: 100m
+        memory: 256Mi
+    metrics:
+      enabled: true
+
 # Application Configuration
 appConfig:
   environment: "production"

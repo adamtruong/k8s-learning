@@ -1,0 +1,2 @@
+# Ignore Helm chart archives
+my-app-0.*.tgz 
